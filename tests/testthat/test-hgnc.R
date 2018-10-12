@@ -1,9 +1,9 @@
 context("hgnc")
 
 test_that("select symbol, alias symbol", {
-  hits <- gntools::iterative_select(c("CDK1", "MT-CO1", "DAC", "doesnt_exist"),
-                                    c("symbol", "alias_symbol"),
-                                    gntools::hgnc)
+  hits <- iterative_select(c("CDK1", "MT-CO1", "DAC", "doesnt_exist"),
+                           c("symbol", "alias_symbol"),
+                           hgnc)
   expect_equal(nrow(hits), 4)
   expect_equal(ncol(hits), 52)
   expect_type(hits$alias_symbol, "list")

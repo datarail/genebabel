@@ -1,4 +1,4 @@
-Package: gntools
+Package: genebabel
 Title: Convert Gene Symbols and Genes
 Version: 0.0.0.9000
 Authors@R: person("Clemens", "Hug", email = "clemens.hug@gmail.com", role = c("aut", "cre"))

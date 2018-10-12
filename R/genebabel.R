@@ -1,7 +1,7 @@
-#' gntools: A package for converting gene IDs and symbols between different
+#' genebabel: A package for converting gene IDs and symbols between different
 #' databases
 #' @docType package
-#' @name gntools
+#' @name genebabel
 #'
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data :=

@@ -1,4 +1,4 @@
 library(testthat)
-library(gntools)
+library(genebabel)
 
-test_check("gntools")
+test_check("genebabel")
