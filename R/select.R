@@ -14,6 +14,11 @@
 #' @return A tibble containing all rows of the dataframe that matched a query.
 #'   The new column `match__` contains the name of the column that matched
 #'   the query for this row.
+#' @examples
+#' iterative_select(c("FLG", "SGK2"),
+#'                  c("symbol", "alias_symbol", "prev_symbol"),
+#'                  hgnc)
+#'
 #' @export
 iterative_select <- function(query, columns, data, return_all = FALSE) {
   remaining_query <- query
@@ -25,14 +30,20 @@ iterative_select <- function(query, columns, data, return_all = FALSE) {
       break()
     }
     if (return_all) {
-      query_i <- remaining_query
-    }
-    else {
       query_i <- query
     }
+    else {
+      query_i <- remaining_query
+    }
     c <- columns[i]
+    # For using dplyr programmatically have to turn some of these variables
+    # into symbols or quosures, not exactly sure this is all done correctly,
+    # but seems to work
     c_sym <- sym(c)
     d <- data
+    # Some columns in the datasets are list column which can have multiple entries
+    # per row. Flatten the list for merging and put back the list column afterwards
+    # Should find better strategy, because this is very slow
     list_col <- FALSE
     if (is.list(data[[c]])) {
       list_col <- TRUE
@@ -48,11 +59,20 @@ iterative_select <- function(query, columns, data, return_all = FALSE) {
         dplyr::select(-!! c_sym) %>%
         dplyr::left_join(dplyr::select(data, .data$uid__, !! c_sym), by = "uid__")
     }
-    remaining_query <- setdiff(remaining_query, out$query)
+    remaining_query <- base::setdiff(remaining_query, out$query)
     out_dfs[[i]] <- out
   }
   out_dfs[["leftover"]] <- tibble::tibble(query = remaining_query, match__ = "none")
-  dplyr::bind_rows(out_dfs) %>%
-    dplyr::select(-uid__)
+  out <- dplyr::bind_rows(out_dfs) %>%
+    dplyr::select(-.data$uid__)
+  # checking if query matched more than one entry in the database
+  multimatch <- out %>%
+    dplyr::count(.data$query) %>%
+    dplyr::filter(.data$n > 1) %>%
+    dplyr::mutate(message = paste0(.data$query, ": ", .data$n))
+  if (nrow(multimatch) > 0) {
+    warning(paste0(multimatch$message, "\n", collapse = " "))
+  }
+  out
 }
 
