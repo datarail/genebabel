@@ -1,0 +1,17 @@
+Package: gntools
+Title: Convert Gene Symbols and Genes
+Version: 0.0.0.9000
+Authors@R: person("Clemens", "Hug", email = "clemens.hug@gmail.com", role = c("aut", "cre"))
+Description: Convert gene symbols and IDs between different databases. Includes dataset for the Hugo Gene Name Consortium (HGNC).
+Depends: R (>= 3.4.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+Imports: dplyr,
+    tidyr,
+    tibble,
+    purrr,
+    rlang,
+    magrittr
+Suggests: testthat
