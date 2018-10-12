@@ -3,14 +3,19 @@
 The `genebabel` package is designed to make it easy to convert gene identifiers
 and symbols between different databases.
 
-Included at the moment are the [HUGO Gene Nomenclature Consortium (HGNC)]
-(http://genenames.org) database of human genes. A convenient feature is that
+Included at the moment are the [HUGO Gene Nomenclature Consortium (HGNC)](http://genenames.org) database of human genes. A convenient feature is that
 also alternative and previous symbols, which are no longer in use, are included
 and can be queried.
 
+# Installation
+
+```r
+devtools::install_github("datarail/genebabel")
+```
+
 # Example uses
 
-``` r
+```r
 library(genebabel)
 query_hgnc(c("FLG", "SGK2"), c("symbol", "alias_symbol", "prev_symbol"))
 #> # A tibble: 2 x 52
