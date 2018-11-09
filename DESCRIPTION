@@ -1,6 +1,6 @@
 Package: genebabel
 Title: Convert Gene Symbols and Genes
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: person("Clemens", "Hug", email = "clemens.hug@gmail.com", role = c("aut", "cre"))
 Description: Convert gene symbols and IDs between different databases. Includes dataset for the Hugo Gene Name Consortium (HGNC).
 Depends: R (>= 3.4.0)

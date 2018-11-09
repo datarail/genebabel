@@ -4,17 +4,18 @@
 \alias{iterative_select}
 \title{Iteratively query a database for matches to a query vector.}
 \usage{
-iterative_select(query, columns, data, return_all = FALSE)
+iterative_select(query, database, match_cols, return_all = FALSE)
 }
 \arguments{
 \item{query}{A character vector.}
 
-\item{columns}{A character vector. The columns in the data to look for matches
+\item{database}{A data.frame or tibble  A database to be queried.
+See [databases()] for a list of included databases.}
+
+\item{match_cols}{A character vector. The columns in the data to look for matches
 with the query. In order of preference, if matches to a column are
 found, matches to subsequent columns are not reported by default, unless
 return_all is `TRUE`.}
-
-\item{data}{A data.frame or tibble.}
 
 \item{return_all}{A logical indicating whether matches to subsequent columns,
 after a match has already been found, should also be returned.}
@@ -25,12 +26,12 @@ A tibble containing all rows of the dataframe that matched a query.
   the query for this row.
 }
 \description{
-`iterative_join()` returns a tibble with all entries of the database that
+`iterative_select()` returns a tibble with all entries of the database that
 match the query vector in any of the selected columns.
 }
 \examples{
 iterative_select(c("FLG", "SGK2"),
-                 c("symbol", "alias_symbol", "prev_symbol"),
-                 hgnc)
+                 hgnc,
+                 c("symbol", "alias_symbol", "prev_symbol"))
 
 }

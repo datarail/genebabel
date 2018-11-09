@@ -1,3 +1,15 @@
+#' List all databases included in the package
+#'
+#' @return A tibble listing all databases.
+#'
+#' @export
+databases <- function() {
+  tibble::tribble(
+    ~id, ~description,
+    "hgnc", "IDs and names of all genes in the HUGO Gene Naming Consortium (HGNC)"
+  )
+}
+
 #' Query the HUGO Gene Nomenclature Commitee approved symbol database
 #'
 #' `query_hgnc()` finds matches for the supplied query vector in the specified
@@ -5,13 +17,7 @@
 #'
 #' Find which columns are available by checking `help(hgnc)`.
 #'
-#' @param query A character vector.
-#' @param columns A character vector. The columns in the data to look for matches
-#'   with the query. In order of preference, if matches to a column are
-#'   found, matches to subsequent columns are not reported by default, unless
-#'   return_all is `TRUE`.
-#' @param return_all A logical indicating whether matches to subsequent columns,
-#'   after a match has already been found, should also be returned.
+#' @inheritParams iterative_select
 #' @return A tibble containing all rows of the dataframe that matched a query.
 #'   The new column `match__` contains the name of the column that matched
 #'   the query for this row.
@@ -20,6 +26,20 @@
 #'            c("symbol", "alias_symbol", "prev_symbol"))
 #'
 #' @export
-query_hgnc <- function (query, columns, return_all = FALSE) {
-  iterative_select(query, columns, hgnc, return_all = return_all)
+query_hgnc <- function (query, match_cols, return_all = FALSE) {
+  iterative_select(query, genebabel::hgnc, match_cols, return_all = return_all)
+}
+
+#' Join query dataframe with results from  the HUGO Gene Naming Consortium
+#' approved symbol database
+#'
+#' Find which columns are available by checking `help(hgnc)`.
+#'
+#' @inheritParams join_results
+#' @return A tibble containing all rows of the dataframe that matched a query.
+#'   The new column `match__` contains the name of the column that matched
+#'   the query for this row.
+#' @export
+join_hgnc <- function (df, query_col, match_cols, select_cols = NULL) {
+  join_results(df, query_col, genebabel::hgnc, match_cols)
 }

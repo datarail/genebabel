@@ -4,6 +4,6 @@
 #' @name genebabel
 #'
 #' @importFrom magrittr %>%
-#' @importFrom rlang .data :=
+#' @importFrom rlang .data := %||%
 #' @importFrom dplyr sym enquo quo quo_name
 NULL
