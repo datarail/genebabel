@@ -22,10 +22,16 @@ return_all is `TRUE`.}
 will be merged in the ouput.}
 }
 \value{
-A tibble containing all rows of the dataframe that matched a query.
-  The new column `match__` contains the name of the column that matched
-  the query for this row.
+The input dataframe merged with the selected matching columns from
+  the HUGO database.
 }
 \description{
 Find which columns are available by checking `help(hgnc)`.
+}
+\examples{
+d <- data.frame(a = 1:3, b = c("FLG", "SGK2", "CDK1"))
+join_hgnc(d, "b",
+  match_cols = c("symbol", "alias_symbol", "prev_symbol"),
+  select_cols = c("entrez_id", "symbol", "refseq_accession"))
+
 }

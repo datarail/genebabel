@@ -15,6 +15,9 @@ devtools::install_github("datarail/genebabel")
 
 # Example uses
 
+Query the HGNC databse using a character vector of gene symbols. Some of them
+might be out of date, therefore also previous and alias symbols are queried.
+
 ```r
 library(genebabel)
 query_hgnc(c("FLG", "SGK2"), c("symbol", "alias_symbol", "prev_symbol"))
@@ -37,4 +40,20 @@ query_hgnc(c("FLG", "SGK2"), c("symbol", "alias_symbol", "prev_symbol"))
 #> #   iuphar <chr>, kznf_gene_catalog <int>, `mamit-trnadb` <int>, cd <chr>,
 #> #   lncrnadb <chr>, enzyme_id <list>, intermediate_filament_db <chr>,
 #> #   rna_central_ids <list>, lncipedia <chr>, symbol <chr>, match__ <chr>
+```
+
+Query the HGNC databse using a data frame. The `b` column contains gene symbols,
+some of which might be out of date, therefore also previous and alias symbols
+are queried.
+
+``` r
+library(genebabel)
+d <- data.frame(a = 1:3, b = c("FLG", "SGK2", "CDK1"))
+join_hgnc(d, "b",
+  match_cols = c("symbol", "alias_symbol", "prev_symbol"),
+  select_cols = c("entrez_id", "symbol", "refseq_accession"))
+#>   a    b entrez_id symbol refseq_accession
+#> 1 1  FLG      2312    FLG        NM_002016
+#> 2 2 SGK2     10110   SGK2     NM_001199264
+#> 3 3 CDK1       983   CDK1        NM_001786
 ```

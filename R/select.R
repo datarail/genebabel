@@ -91,6 +91,14 @@ iterative_select <- function(query, database, match_cols, return_all = FALSE) {
 #' @param select_cols A character vector of column names in the database that
 #'   will be merged in the ouput.
 #' @inheritParams iterative_select
+#' @return The input dataframe merged with the selected matching columns from
+#'   the database.
+#' @examples
+#' d <- data.frame(a = 1:3, b = c("FLG", "SGK2", "CDK1"))
+#' join_results(d, "b", hgnc,
+#'   match_cols = c("symbol", "alias_symbol", "prev_symbol"),
+#'   select_cols = c("entrez_id", "symbol", "refseq_accession"))
+#'
 #' @export
 join_results <- function (df, query_col, database, match_cols, select_cols = NULL) {
   hits <- iterative_select(df[[query_col]], database, match_cols)

@@ -23,7 +23,18 @@ return_all is `TRUE`.}
 \item{select_cols}{A character vector of column names in the database that
 will be merged in the ouput.}
 }
+\value{
+The input dataframe merged with the selected matching columns from
+  the database.
+}
 \description{
 `join_results()` queries a database for matches to a column in the supplied
 dataset and returns it together with the matches found.
+}
+\examples{
+d <- data.frame(a = 1:3, b = c("FLG", "SGK2", "CDK1"))
+join_results(d, "b", hgnc,
+  match_cols = c("symbol", "alias_symbol", "prev_symbol"),
+  select_cols = c("entrez_id", "symbol", "refseq_accession"))
+
 }
