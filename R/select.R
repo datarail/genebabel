@@ -73,8 +73,16 @@ iterative_select <- function(query, database, match_cols, return_all = FALSE) {
     dplyr::mutate(message = paste0(.data$query, ": ", .data$n))
   if (nrow(multimatch) > 0) {
     warning(
-      "Multile matches of same priority found for:\n",
+      "Multiple matches of same priority found for some queries. All matches are
+      reported.\n",
       paste0(multimatch$message, "\n", collapse = " ")
+    )
+  }
+  # Warning user when any queries didn't match
+  if (length(remaining_query) > 0) {
+    warning(
+      "No matches found for some queries. Reporting NA for these queries.\n",
+      paste0(remaining_query, collapse = "\n")
     )
   }
   out
