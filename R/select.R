@@ -1,3 +1,8 @@
+
+
+
+
+
 #' Iteratively query a database for matches to a query vector.
 #'
 #' `iterative_select()` returns a tibble with all entries of the database that
@@ -22,53 +27,52 @@
 #'
 #' @export
 iterative_select <- function(query, database, match_cols, return_all = FALSE) {
+  database <- database %>%
+    dplyr::mutate(uid__ = 1:n())
+  orig_query <- query
+  query <- unique(query)
   remaining_query <- query
-  data <- database %>%
-    dplyr::mutate("uid__" := 1:dplyr::n())
-  out_dfs <- list()
+  out_ids <- list()
   for (i in seq_along(match_cols)) {
     if (rlang::is_empty(remaining_query)) {
       break()
     }
     if (return_all) {
-      query_i <- query
+      query_cur <- query
     }
     else {
-      query_i <- remaining_query
+      query_cur <- remaining_query
     }
     c <- match_cols[i]
     # For using dplyr programmatically have to turn some of these variables
     # into symbols or quosures, not exactly sure this is all done correctly,
     # but seems to work
     c_sym <- sym(c)
-    d <- data
     # Some columns in the datasets are list column which can have multiple entries
     # per row. Flatten the list for merging and put back the list column afterwards
     # Should find better strategy, because this is very slow
-    list_col <- FALSE
-    if (is.list(data[[c]])) {
-      list_col <- TRUE
+    d <- database %>%
+      dplyr::select(uid__, !!c_sym) %>%
+      tidyr::drop_na(!! c_sym)
+    if (is.list(database[[c]])) {
       d <- d %>%
-        tidyr::drop_na(!! c_sym) %>%
         tidyr::unnest(!! c_sym)
     }
-    out <- tibble::tibble(query = query_i) %>%
-      dplyr::inner_join(d, by = c("query" = c)) %>%
-      dplyr::mutate(!! c_sym := .data$query, match__ = c)
-    if (list_col) {
-      out <- out %>%
-        dplyr::select(-!! c_sym) %>%
-        dplyr::left_join(dplyr::select(data, .data$uid__, !! c_sym), by = "uid__")
-    }
+    out <- tibble::tibble(
+      query = query_cur,
+      match__ = c
+    ) %>%
+      dplyr::inner_join(d, by = c("query" = c))
     remaining_query <- base::setdiff(remaining_query, out$query)
-    out_dfs[[i]] <- out
+    out_ids[[i]] <- out
   }
-  out_dfs[["leftover"]] <- tibble::tibble(query = remaining_query, match__ = "none")
-  out <- dplyr::bind_rows(out_dfs) %>%
-    dplyr::select(-.data$uid__)
+  out_ids[["leftover"]] <- tibble::tibble(query = remaining_query, match__ = "none")
+  out_ids_df <- dplyr::bind_rows(out_ids)
   # checking if query matched more than one entry in the database
-  multimatch <- out %>%
+  multimatch <- out_ids_df %>%
+    dplyr::group_by(.data$match__) %>%
     dplyr::count(.data$query) %>%
+    dplyr::ungroup() %>%
     dplyr::filter(.data$n > 1) %>%
     dplyr::mutate(message = paste0(.data$query, ": ", .data$n))
   if (nrow(multimatch) > 0) {
@@ -85,7 +89,10 @@ iterative_select <- function(query, database, match_cols, return_all = FALSE) {
       paste0(remaining_query, collapse = "\n")
     )
   }
-  out
+  out_df <- out_ids_df %>%
+    dplyr::left_join(database, by = "uid__") %>%
+    dplyr::select(-uid__)
+  out_df
 }
 
 #' Join results from a database into an existing dataframe.
