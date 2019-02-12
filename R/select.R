@@ -27,6 +27,8 @@
 #'
 #' @export
 iterative_select <- function(query, database, match_cols, return_all = FALSE) {
+  if (rlang::is_empty(query))
+    stop("'query' can not be empty.")
   database <- database %>%
     dplyr::mutate(uid__ = 1:n())
   orig_query <- query
@@ -34,16 +36,12 @@ iterative_select <- function(query, database, match_cols, return_all = FALSE) {
   remaining_query <- query
   out_ids <- list()
   for (i in seq_along(match_cols)) {
-    if (rlang::is_empty(remaining_query)) {
+    if (rlang::is_empty(remaining_query))
       break()
-    }
-    if (return_all) {
-      query_cur <- query
-    }
-    else {
-      query_cur <- remaining_query
-    }
+    query_cur <- if(return_all) query else remaining_query
     c <- match_cols[i]
+    if (!(c %in% names(database)))
+      stop("match_col '", c, "' not in database")
     # For using dplyr programmatically have to turn some of these variables
     # into symbols or quosures, not exactly sure this is all done correctly,
     # but seems to work
@@ -66,7 +64,8 @@ iterative_select <- function(query, database, match_cols, return_all = FALSE) {
     remaining_query <- base::setdiff(remaining_query, out$query)
     out_ids[[i]] <- out
   }
-  out_ids[["leftover"]] <- tibble::tibble(query = remaining_query, match__ = "none")
+  if (!rlang::is_empty(remaining_query))
+    out_ids[["leftover"]] <- tibble::tibble(query = remaining_query, match__ = "none")
   out_ids_df <- dplyr::bind_rows(out_ids)
   # checking if query matched more than one entry in the database
   multimatch <- out_ids_df %>%
