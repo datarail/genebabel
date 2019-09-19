@@ -66,4 +66,7 @@ A dataset containing the symbols and IDs from various external databases
 for all genes in the HGNC database. Some columns, such as `alias_symbol` are
 list columns, because each entry can be associated with multiple alias symbols.
 }
+\details{
+Version 2019-09-19
+}
 \keyword{datasets}

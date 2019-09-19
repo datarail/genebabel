@@ -4,7 +4,11 @@ library(devtools)
 library(stringr)
 
 if (!file.exists("data-raw/hgnc_complete_set.json")) {
-  download.file("ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/json/hgnc_complete_set.json", quite = TRUE)
+  download.file(
+    "ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/json/hgnc_complete_set.json",
+    "data-raw/hgnc_complete_set.json",
+    quiet = TRUE
+  )
 }
 
 # Decided to use JSON because the encoding of columns with multiple entries as
@@ -12,10 +16,10 @@ if (!file.exists("data-raw/hgnc_complete_set.json")) {
 # in the TSV or CSV files. But have to reorder columns based on the order in
 # the TSV
 gene_names_json <- jsonlite::fromJSON("data-raw/hgnc_complete_set.json")
-hgnc <- tibble::as.tibble(gene_names_json$response$docs) %>%
+hgnc <- as_tibble(gene_names_json$response$docs) %>%
   dplyr::select("hgnc_id", "symbol", "name", "locus_group", "locus_type", "status",
                 "location", "location_sortable", "alias_symbol", "alias_name",
-                "prev_symbol", "prev_name", "gene_family", "gene_family_id",
+                "prev_symbol", "prev_name", "gene_group", "gene_group_id",
                 "date_approved_reserved", "date_symbol_changed", "date_name_changed",
                 "date_modified", "entrez_id", "ensembl_gene_id", "vega_id", "ucsc_id",
                 "ena", "refseq_accession", "ccds_id", "uniprot_ids", "pubmed_id",
@@ -23,8 +27,7 @@ hgnc <- tibble::as.tibble(gene_names_json$response$docs) %>%
                 "snornabase", "bioparadigms_slc", "orphanet", "pseudogene.org",
                 "horde_id", "merops", "imgt", "iuphar", "kznf_gene_catalog",
                 "mamit-trnadb", "cd", "lncrnadb", "enzyme_id", "intermediate_filament_db",
-                "rna_central_ids", "lncipedia")
-
+                "rna_central_id", "gtrnadb", "lncipedia")
 
 # if (!file.exists("data-raw/hgnc_complete_set.txt")) {
 #   download.file("ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/hgnc_complete_set.txt", destfile =  "data-raw/hgnc_complete_set.txt", quiet = TRUE)

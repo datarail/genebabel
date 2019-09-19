@@ -3,6 +3,8 @@
 #' A dataset containing the symbols and IDs from various external databases
 #' for all genes in the HGNC database. Some columns, such as `alias_symbol` are
 #' list columns, because each entry can be associated with multiple alias symbols.
+#' 
+#' Version 2019-09-19
 #'
 #' @format A tibble with 42726 rows and 49 variables:
 #' \describe{
